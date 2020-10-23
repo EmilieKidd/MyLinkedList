@@ -1,0 +1,16 @@
+package cis232.A2;
+
+class A2232EKidListNode<AnyType extends Comparable<? super AnyType>> {
+    public AnyType element;
+    public A2232EKidListNode<AnyType> next;
+
+
+    public A2232EKidListNode(AnyType theElement) {
+        this(theElement, null);
+    }
+
+    public A2232EKidListNode(AnyType theElement, A2232EKidListNode<AnyType> n) {
+        element = theElement;
+        next = n;
+    }
+}
