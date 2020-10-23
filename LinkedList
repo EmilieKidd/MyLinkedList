@@ -1,0 +1,218 @@
+package cis232.A2;
+
+
+public class A2232EKidLinkedList<AnyType extends Comparable<? super AnyType>> {
+
+    private A2232EKidListNode<AnyType> header;
+
+
+    public A2232EKidLinkedList() {
+        header = new A2232EKidListNode<>(null);
+    }
+
+
+    public void add(AnyType itemToAdd) {
+        A2232EKidLinkedListIterator<AnyType> prev = zeroth();
+        A2232EKidLinkedListIterator<AnyType> curr = first();
+
+        while (curr.isValid() && itemToAdd.compareTo(curr.retrieve()) > 0) {
+            prev.advance();
+            curr.advance();
+        }
+
+        insert(itemToAdd, prev);
+    }
+
+
+    public boolean replace(AnyType toReplace, AnyType toInsert) {
+        if (find(toReplace).isValid()) {
+            remove(toReplace);
+            add(toInsert);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public void showList() {
+        if (this.isEmpty()) {
+            System.out.print("Empty list");
+        } else {
+            A2232EKidLinkedListIterator<AnyType> itr = this.first();
+
+            for (; itr.isValid(); itr.advance()) {
+                System.out.println(itr.retrieve());
+            }
+        }
+
+        System.out.println("List size: " + listSize(this));
+        System.out.println();
+    }
+
+
+    public void showList(int perLine) {
+        int i = 0;
+
+        if (this.isEmpty()) {
+            System.out.print("Empty list");
+        } else {
+            A2232EKidLinkedListIterator<AnyType> itr = this.first();
+
+            for (; itr.isValid(); itr.advance()) {
+                System.out.print(itr.retrieve() + " ");
+                i++;
+
+                if (i + 1 > perLine) {
+                    System.out.println();
+                    i = 0;
+                }
+            }
+            System.out.println();
+        }
+
+        System.out.println("List size: " + listSize(this));
+        System.out.println();
+    }
+
+
+    public Result<AnyType> getMode() {
+        AnyType maxValue = null;
+        int maxCount = 0;
+        int cnt;
+
+        A2232EKidLinkedListIterator<AnyType> itr1 = this.first();
+
+
+        for (; itr1.isValid(); itr1.advance()) {
+            A2232EKidLinkedListIterator<AnyType> itr2 = this.first();
+            AnyType currentVal = itr1.retrieve();
+
+            cnt = 0;
+            for (; itr2.isValid(); itr2.advance()) {
+                if (itr1.retrieve().compareTo(itr2.retrieve()) == 0) {
+                    cnt++;
+                }
+            }
+
+            if (cnt > maxCount) {
+                maxCount = cnt;
+                maxValue = currentVal;
+            }
+
+        }
+
+        ListResult result = new ListResult(maxValue, maxCount);
+
+        return result;
+    }
+
+
+    public String author() {
+        return "Emilie Kidd";
+    }
+
+
+    public boolean isEmpty() {
+        return header.next == null;
+    }
+
+
+    public void makeEmpty() {
+        header.next = null;
+    }
+
+
+    public A2232EKidLinkedListIterator<AnyType> zeroth() {
+        return new A2232EKidLinkedListIterator<>(header);
+    }
+
+
+    public A2232EKidLinkedListIterator<AnyType> first() {
+        return new A2232EKidLinkedListIterator<>(header.next);
+    }
+
+
+    private void insert(AnyType x, A2232EKidLinkedListIterator<AnyType> p) {
+        if (p != null && p.current != null) {
+            p.current.next = new A2232EKidListNode<>(x, p.current.next);
+        }
+    }
+
+
+    public A2232EKidLinkedListIterator<AnyType> find(AnyType x) {
+        A2232EKidListNode<AnyType> itr = header.next;
+
+        while (itr != null && !itr.element.equals(x)) {
+            itr = itr.next;
+        }
+
+        return new A2232EKidLinkedListIterator<>(itr);
+    }
+
+
+    public A2232EKidLinkedListIterator<AnyType> findPrevious(AnyType x) {
+        A2232EKidListNode<AnyType> itr = header;
+
+        while (itr.next != null && !itr.next.element.equals(x)) {
+            itr = itr.next;
+        }
+
+        return new A2232EKidLinkedListIterator<>(itr);
+    }
+
+
+    public void remove(AnyType x) {
+        A2232EKidLinkedListIterator<AnyType> p = findPrevious(x);
+
+        if (p.current.next != null) {
+            p.current.next = p.current.next.next;
+        }
+    }
+
+
+    public static <AnyType extends Comparable<? super AnyType>> void printList(A2232EKidLinkedList<AnyType> theList) {
+        if (theList.isEmpty()) {
+            System.out.print("Empty list");
+        } else {
+            A2232EKidLinkedListIterator<AnyType> itr = theList.first();
+            for (; itr.isValid(); itr.advance())
+                System.out.print(itr.retrieve() + " ");
+        }
+
+        System.out.println();
+    }
+
+
+    public static <AnyType extends Comparable<? super AnyType>> int listSize(A2232EKidLinkedList<AnyType> theList) {
+        A2232EKidLinkedListIterator<AnyType> itr;
+        int size = 0;
+
+        for (itr = theList.first(); itr.isValid(); itr.advance()) {
+            size++;
+        }
+
+        return size;
+    }
+
+    private class ListResult implements Result {
+
+        private AnyType finalMaxValue;
+        private int finalCnt;
+
+        public ListResult(AnyType finalValue, int finalCount) {
+            finalMaxValue = finalValue;
+            finalCnt = finalCount;
+        }
+
+        @Override
+        public AnyType mode() {
+            return finalMaxValue;
+        }
+
+        @Override
+        public int count() {
+            return finalCnt;
+        }
+    }
+}
